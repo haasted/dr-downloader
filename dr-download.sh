@@ -9,6 +9,11 @@ echo ${data} | jq -r '[.title, .subtitle] | join(" - ")'
 
 url2=$(curl -Ls ${url1} | jq '.Links[] | select(.Target=="HLS") | .Uri' | tr -d '"')
 
+if [ -z "$url2" ]; then
+	echo "Program could not be found. It may have expired from the homepage."
+	exit
+fi
+
 streamUrl=$(curl -Ls ${url2} | tail -n 1)
 
 ./hls-fetch/hls-fetch --playlist ${streamUrl} -o "$1.mp4"
